@@ -8,37 +8,42 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  
 
   const handleLogin = async () => {
     setLoading(true);
     setMessage("");
 
     try {
-      const response = await fetch("http://localhost:5005/api/auth/login", {
+      const response = await fetch("http://127.0.0.1:5005/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({
+          email: email.trim(),
+          password: password.trim()
+        })
       });
 
       const data = await response.json();
 
-      if (response.ok) {
-        setMessage("Login successful 🎉");
-
-        // Save user data if needed
-        localStorage.setItem("userId", data.userId);
-
-        // Redirect to dashboard (change route later)
-        navigate("/dashboard");
-
-      } else {
+      if (!response.ok) {
         setMessage(data.message || "Invalid credentials");
+        setLoading(false);
+        return;
       }
 
+      // Save user info
+     localStorage.setItem("userId", data.userId);
+localStorage.setItem("isSurveyCompleted", data.isSurveyCompleted);
+navigate("/user-dashboard");
+      // Redirect
+      navigate("/user-dashboard");
+
     } catch (error) {
-      setMessage("Server not reachable");
+      console.error("Login error:", error);
+      setMessage("Unable to connect to server. Make sure backend is running.");
     }
 
     setLoading(false);
@@ -47,7 +52,7 @@ export default function Login() {
   return (
     <div className="min-h-screen flex">
 
-      {/* LEFT SIDE - Branding */}
+      {/* LEFT SIDE */}
       <div className="hidden md:flex w-1/2 bg-gradient-to-br from-slate-800 to-slate-900 text-white items-center justify-center p-16">
         <div>
           <h1 className="text-4xl font-bold mb-6">
@@ -61,9 +66,8 @@ export default function Login() {
         </div>
       </div>
 
-      {/* RIGHT SIDE - Form */}
+      {/* RIGHT SIDE */}
       <div className="w-full md:w-1/2 flex items-center justify-center px-10">
-
         <div className="w-full max-w-md flex flex-col gap-6">
 
           <div>
@@ -101,13 +105,14 @@ export default function Login() {
             }`}
           >
             {loading ? "Logging in..." : "Login"}
+            
           </button>
+          
 
           {message && (
-            <p className="text-sm text-gray-600">{message}</p>
+            <p className="text-sm text-red-500">{message}</p>
           )}
 
-          {/* Redirect to Signup */}
           <p className="text-sm text-gray-500 text-center">
             Not registered yet?{" "}
             <span

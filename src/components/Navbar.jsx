@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import logo from "../assets/logo.png";
 
 const Navbar = () => {
   return (
@@ -10,9 +11,11 @@ const Navbar = () => {
 
       {/* Logo Section */}
       <div className="flex items-center space-x-3">
-        <div className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-lg font-bold">
-          SWS
-        </div>
+        <img
+  src={logo}
+  alt="StudyWithStrangers Logo"
+  className="h-10 w-auto object-contain"
+/>
         <h1 className="text-xl font-bold tracking-wide">
           StudyWithStrangers
         </h1>

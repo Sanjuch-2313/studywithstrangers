@@ -32,6 +32,10 @@ const userSchema = new mongoose.Schema(
       enum: ["free", "serious", "pro"],
       default: "free",
     },
+    isSurveyCompleted: {
+  type: Boolean,
+  default: false,
+},
   },
   { timestamps: true }
 );
