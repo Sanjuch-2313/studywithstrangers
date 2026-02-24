@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export default function UserDashboard() {
   const surveyStatus = localStorage.getItem("isSurveyCompleted") === "true";
@@ -10,7 +10,22 @@ export default function UserDashboard() {
   const [dailyTargetHours, setDailyTargetHours] = useState("");
   const [goal, setGoal] = useState("");
 
+  const [showIntroAnimation, setShowIntroAnimation] = useState(false);
+
   const totalSteps = 3;
+
+  // ✅ Animation Controller
+  useEffect(() => {
+    if (!showSurvey) {
+      setShowIntroAnimation(true);
+
+      const timer = setTimeout(() => {
+        setShowIntroAnimation(false);
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showSurvey]);
 
   const nextStep = async () => {
     if (step < totalSteps) {
@@ -35,7 +50,8 @@ export default function UserDashboard() {
         );
 
         localStorage.setItem("isSurveyCompleted", "true");
-        setShowSurvey(false);
+        setShowSurvey(false); // 🔥 this now triggers animation via useEffect
+
       } catch (error) {
         console.error("Survey update failed:", error);
       }
@@ -60,7 +76,8 @@ export default function UserDashboard() {
       );
 
       localStorage.setItem("isSurveyCompleted", "true");
-      setShowSurvey(false);
+      setShowSurvey(false); // 🔥 animation auto-triggers
+
     } catch (error) {
       console.error("Skip survey failed:", error);
     }
@@ -94,6 +111,15 @@ export default function UserDashboard() {
           Your focus journey starts here.
         </p>
       </div>
+
+      {/* 🔥 INTRO ANIMATION OVERLAY */}
+      {showIntroAnimation && (
+        <div className="fixed inset-0 flex items-center justify-center bg-transparent backdrop-blur-md z-[100] overflow-hidden transition-all duration-500">
+          <h1 className="text-[80px] md:text-[160px] font-bold text-gray-800 animate-zoomOut">
+            StudyWithStrangers
+          </h1>
+        </div>
+      )}
 
       {/* SURVEY OVERLAY */}
       {showSurvey && (

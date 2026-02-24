@@ -11,3 +11,20 @@
   background-size: 200% 200%;
   animation: gradientShift 12s ease infinite;
 }
+@keyframes zoomOutHeader {
+  0% {
+    transform: scale(3);
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-zoomOut {
+  animation: zoomOutHeader 2s ease forwards;
+}
