@@ -48,7 +48,7 @@ useEffect(() => {
     <>
       {/* 🔥 Intro Animation Overlay */}
       {showIntro && (
-  <div className="fixed inset-0 flex items-center justify-center bg-black z-[999]">
+  <div className="fixed inset-0 flex items-center justify-center bg-transparent backdrop-blur-md z-[999]">
     <img
       src={logo}
       alt="logo intro"
