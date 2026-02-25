@@ -1,6 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Gradient Background Animation */
 @keyframes gradientShift {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
@@ -10,14 +12,15 @@
 .animate-gradient {
   background-size: 200% 200%;
   animation: gradientShift 12s ease infinite;
-
 }
-@keyframes zoomToHeader {
+
+/* Zoom Out Animation */
+@keyframes zoomOutHeader {
   0% {
     transform: scale(3);
     opacity: 0;
   }
-  30% {
+  40% {
     opacity: 1;
   }
   100% {
@@ -27,5 +30,5 @@
 }
 
 .animate-zoomOut {
-  animation: zoomToHeader 2s ease forwards;
+  animation: zoomOutHeader 2s ease forwards;
 }

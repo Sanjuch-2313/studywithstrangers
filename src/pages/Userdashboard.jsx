@@ -3,6 +3,8 @@ import { FaBell, FaUserCircle, FaFire, FaChartLine } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 export default function UserDashboard() {
+  const navigate = useNavigate();
+
   const surveyStatus = localStorage.getItem("isSurveyCompleted") === "true";
 
   const [step, setStep] = useState(1);
@@ -13,13 +15,11 @@ export default function UserDashboard() {
   const [goal, setGoal] = useState("");
 
   const [showIntroAnimation, setShowIntroAnimation] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const totalSteps = 3;
 
-  const navigate = useNavigate();
-const [showDropdown, setShowDropdown] = useState(false);
-
-  // ✅ Animation Controller
+  // Animation Controller
   useEffect(() => {
     if (!showSurvey) {
       setShowIntroAnimation(true);
@@ -55,8 +55,7 @@ const [showDropdown, setShowDropdown] = useState(false);
         );
 
         localStorage.setItem("isSurveyCompleted", "true");
-        setShowSurvey(false); // 🔥 this now triggers animation via useEffect
-
+        setShowSurvey(false);
       } catch (error) {
         console.error("Survey update failed:", error);
       }
@@ -81,17 +80,16 @@ const [showDropdown, setShowDropdown] = useState(false);
       );
 
       localStorage.setItem("isSurveyCompleted", "true");
-      setShowSurvey(false); // 🔥 animation auto-triggers
-
+      setShowSurvey(false);
     } catch (error) {
       console.error("Skip survey failed:", error);
     }
   };
 
   const handleLogout = () => {
-  localStorage.clear();
-  navigate("/login");
-};
+    localStorage.clear();
+    navigate("/login");
+  };
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-slate-100 via-white to-slate-200 text-gray-800 overflow-hidden">
@@ -112,19 +110,15 @@ const [showDropdown, setShowDropdown] = useState(false);
         {/* RIGHT ICONS */}
         <div className="flex items-center gap-6 relative">
 
-          {/* Trending */}
           <FaChartLine className="text-xl text-gray-600 hover:text-indigo-600 cursor-pointer transition" />
 
-          {/* Streak */}
           <div className="flex items-center gap-1 text-orange-500">
             <FaFire className="text-xl" />
             <span className="text-sm font-medium">7</span>
           </div>
 
-          {/* Notification */}
           <FaBell className="text-xl text-gray-600 hover:text-indigo-600 cursor-pointer transition" />
 
-          {/* Profile */}
           <div className="relative">
             <FaUserCircle
               className="text-3xl text-gray-700 cursor-pointer hover:text-indigo-600 transition"
@@ -167,7 +161,7 @@ const [showDropdown, setShowDropdown] = useState(false);
         </p>
       </div>
 
-      {/* 🔥 INTRO ANIMATION OVERLAY */}
+      {/* INTRO ANIMATION OVERLAY */}
       {showIntroAnimation && (
         <div className="fixed inset-0 flex items-center justify-center bg-transparent backdrop-blur-md z-[100] overflow-hidden transition-all duration-500">
           <h1 className="text-[80px] md:text-[160px] font-bold text-gray-800 animate-zoomOut">
