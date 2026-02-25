@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { FaBell, FaUserCircle, FaFire, FaChartLine } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 export default function UserDashboard() {
   const surveyStatus = localStorage.getItem("isSurveyCompleted") === "true";
@@ -10,7 +12,25 @@ export default function UserDashboard() {
   const [dailyTargetHours, setDailyTargetHours] = useState("");
   const [goal, setGoal] = useState("");
 
+  const [showIntroAnimation, setShowIntroAnimation] = useState(false);
+
   const totalSteps = 3;
+
+  const navigate = useNavigate();
+const [showDropdown, setShowDropdown] = useState(false);
+
+  // ✅ Animation Controller
+  useEffect(() => {
+    if (!showSurvey) {
+      setShowIntroAnimation(true);
+
+      const timer = setTimeout(() => {
+        setShowIntroAnimation(false);
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showSurvey]);
 
   const nextStep = async () => {
     if (step < totalSteps) {
@@ -35,7 +55,8 @@ export default function UserDashboard() {
         );
 
         localStorage.setItem("isSurveyCompleted", "true");
-        setShowSurvey(false);
+        setShowSurvey(false); // 🔥 this now triggers animation via useEffect
+
       } catch (error) {
         console.error("Survey update failed:", error);
       }
@@ -60,17 +81,25 @@ export default function UserDashboard() {
       );
 
       localStorage.setItem("isSurveyCompleted", "true");
-      setShowSurvey(false);
+      setShowSurvey(false); // 🔥 animation auto-triggers
+
     } catch (error) {
       console.error("Skip survey failed:", error);
     }
   };
 
+  const handleLogout = () => {
+  localStorage.clear();
+  navigate("/login");
+};
+
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-slate-100 via-white to-slate-200 text-gray-800 overflow-hidden">
 
       {/* HEADER */}
-      <header className="flex justify-between items-center px-6 md:px-12 py-4 backdrop-blur-xl bg-white/60 border-b border-white/40 shadow-sm sticky top-0 z-10">
+      <header className="flex justify-between items-center px-6 md:px-12 py-4 backdrop-blur-xl bg-white/60 border-b border-white/40 shadow-sm sticky top-0 z-20">
+
+        {/* LEFT */}
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg">
             SWS
@@ -78,6 +107,49 @@ export default function UserDashboard() {
           <h1 className="text-xl md:text-2xl font-semibold">
             StudyWithStrangers
           </h1>
+        </div>
+
+        {/* RIGHT ICONS */}
+        <div className="flex items-center gap-6 relative">
+
+          {/* Trending */}
+          <FaChartLine className="text-xl text-gray-600 hover:text-indigo-600 cursor-pointer transition" />
+
+          {/* Streak */}
+          <div className="flex items-center gap-1 text-orange-500">
+            <FaFire className="text-xl" />
+            <span className="text-sm font-medium">7</span>
+          </div>
+
+          {/* Notification */}
+          <FaBell className="text-xl text-gray-600 hover:text-indigo-600 cursor-pointer transition" />
+
+          {/* Profile */}
+          <div className="relative">
+            <FaUserCircle
+              className="text-3xl text-gray-700 cursor-pointer hover:text-indigo-600 transition"
+              onClick={() => setShowDropdown(!showDropdown)}
+            />
+
+            {showDropdown && (
+              <div className="absolute right-0 mt-3 w-48 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden z-50">
+                <button className="w-full text-left px-4 py-3 hover:bg-gray-100 transition">
+                  My Profile
+                </button>
+
+                <button className="w-full text-left px-4 py-3 hover:bg-gray-100 transition">
+                  Settings
+                </button>
+
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-4 py-3 hover:bg-red-100 text-red-500 transition"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
@@ -94,6 +166,15 @@ export default function UserDashboard() {
           Your focus journey starts here.
         </p>
       </div>
+
+      {/* 🔥 INTRO ANIMATION OVERLAY */}
+      {showIntroAnimation && (
+        <div className="fixed inset-0 flex items-center justify-center bg-transparent backdrop-blur-md z-[100] overflow-hidden transition-all duration-500">
+          <h1 className="text-[80px] md:text-[160px] font-bold text-gray-800 animate-zoomOut">
+            StudyWithStrangers
+          </h1>
+        </div>
+      )}
 
       {/* SURVEY OVERLAY */}
       {showSurvey && (
