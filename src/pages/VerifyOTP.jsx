@@ -1,41 +1,88 @@
 import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
 
-export default function VerifyOTP() {
-  const [otp, setOtp] = useState("");
-  const navigate = useNavigate();
-  const location = useLocation();
+export default function VerifyOtp() {
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [accepted, setAccepted] = useState(false);
 
-  const email = location.state?.email;
+  const handleChange = (value, index) => {
+    if (!/^[0-9]?$/.test(value)) return;
 
-  const handleVerify = async () => {
-    const response = await fetch("http://127.0.0.1:5005/api/auth/verify-otp", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ email, otp })
-    });
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
 
-    const data = await response.json();
-
-    if (response.ok) {
-      alert("Verified successfully!");
-      navigate("/login");
-    } else {
-      alert(data.message);
+    if (value && index < 5) {
+      document.getElementById(`otp-${index + 1}`).focus();
     }
   };
 
+  const handleVerify = () => {
+    if (!accepted) {
+      alert("Please accept privacy & policies");
+      return;
+    }
+
+    const finalOtp = otp.join("");
+    console.log("OTP:", finalOtp);
+  };
+
   return (
-    <div>
-      <h2>Enter OTP</h2>
-      <input
-        value={otp}
-        onChange={(e) => setOtp(e.target.value)}
-        placeholder="Enter 6-digit OTP"
-      />
-      <button onClick={handleVerify}>Verify</button>
+    <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-900 text-white px-6">
+
+      {/* Heading */}
+      <h1 className="text-4xl md:text-5xl font-bold text-center mb-4">
+        StudyWithStrangers welcomes you
+      </h1>
+
+      <p className="text-gray-300 text-center max-w-2xl mb-8">
+        Before continuing, please verify your email using the OTP sent to you.
+        By proceeding, you agree to our privacy policy and acknowledge that
+        you are responsible for your actions while using this platform.
+      </p>
+
+      {/* OTP Boxes */}
+      <div className="flex gap-4 mb-8">
+        {otp.map((digit, index) => (
+          <input
+            key={index}
+            id={`otp-${index}`}
+            type="text"
+            maxLength="1"
+            value={digit}
+            onChange={(e) => handleChange(e.target.value, index)}
+            className="w-14 h-14 md:w-16 md:h-16 text-center text-2xl font-semibold bg-white/10 border border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+          />
+        ))}
+      </div>
+
+      {/* Policy Checkbox */}
+      <div className="flex items-start gap-3 max-w-xl mb-6">
+        <input
+          type="checkbox"
+          checked={accepted}
+          onChange={() => setAccepted(!accepted)}
+          className="mt-1 w-5 h-5 accent-indigo-500"
+        />
+        <p className="text-gray-300 text-sm leading-relaxed">
+          I confirm that I have read and agree to the Privacy Policy and Terms
+          of Service. I understand that I am fully responsible for my actions
+          on this platform and agree to abide by community guidelines.
+        </p>
+      </div>
+
+      {/* Verify Button */}
+      <button
+        onClick={handleVerify}
+        disabled={!accepted}
+        className={`px-10 py-3 rounded-xl font-medium text-lg transition-all duration-300 ${
+          accepted
+            ? "bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-500/30"
+            : "bg-gray-500 cursor-not-allowed"
+        }`}
+      >
+        Verify
+      </button>
+
     </div>
   );
 }
