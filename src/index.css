@@ -13,8 +13,6 @@
   background-size: 200% 200%;
   animation: gradientShift 12s ease infinite;
 }
-
-/* Zoom Out Animation */
 @keyframes zoomOutHeader {
   0% {
     transform: scale(3);
@@ -29,9 +27,26 @@
   }
 }
 
+@keyframes slowConnectionPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.4);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 .animate-zoomOut {
   animation: zoomOutHeader 2s ease forwards;
 }
+
+.animate-pulseSlow {
+  animation: slowConnectionPulse 1.2s ease-in-out infinite;
+}
+
 @keyframes logoZoomToNav {
   0% {
     transform: scale(6);

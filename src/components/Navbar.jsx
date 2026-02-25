@@ -3,28 +3,63 @@ import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
 
 const Navbar = () => {
-  const [showIntro, setShowIntro] = useState(true);
+  
+  const [showIntro, setShowIntro] = useState(false);
 
-  useEffect(() => {
+useEffect(() => {
+  const navigationEntry = performance.getEntriesByType("navigation")[0];
+  const navType = navigationEntry?.type;
+
+  const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  const isSlow =
+    connection &&
+    (connection.effectiveType === "slow-2g" || connection.effectiveType === "2g");
+
+  // ✅ Case 1: Page Refresh → Animate once (zoom out)
+  if (navType === "reload") {
+    setShowIntro(true);
+
     const timer = setTimeout(() => {
       setShowIntro(false);
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }
+
+  // ✅ Case 2: Slow Internet → Pulse until fully loaded
+  if (isSlow) {
+    setShowIntro(true);
+
+    const handleLoad = () => {
+      setShowIntro(false);
+    };
+
+    window.addEventListener("load", handleLoad);
+
+    return () => window.removeEventListener("load", handleLoad);
+  }
+
+  // ❌ Case 3: Normal navigation (like login → dashboard)
+  // Do nothing (no animation)
+
+}, []);
 
   return (
     <>
       {/* 🔥 Intro Animation Overlay */}
       {showIntro && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black z-[999] overflow-hidden">
-          <img
-            src={logo}
-            alt="logo intro"
-            className="w-40 md:w-60 animate-logoIntro"
-          />
-        </div>
-      )}
+  <div className="fixed inset-0 flex items-center justify-center bg-black z-[999]">
+    <img
+      src={logo}
+      alt="logo intro"
+      className={`w-40 md:w-60 ${
+        performance.getEntriesByType("navigation")[0]?.type === "reload"
+          ? "animate-zoomOut"
+          : "animate-pulseSlow"
+      }`}
+    />
+  </div>
+)}
 
       <nav
         className="fixed top-0 left-0 w-full z-50 
