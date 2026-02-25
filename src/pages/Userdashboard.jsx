@@ -87,8 +87,8 @@ export default function UserDashboard() {
   };
 
   const handleLogout = () => {
-    localStorage.clear();
-    navigate("/login");
+    localStorage.removeItem("userId");
+    navigate("/", { replace: true });
   };
 
   return (
