@@ -7,45 +7,61 @@ const userSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+
     lastName: {
       type: String,
       required: true,
       trim: true,
     },
+
     email: {
       type: String,
       required: true,
       unique: true,
       lowercase: true,
     },
+
     password: {
       type: String,
       required: true,
     },
+
     primaryCategory: {
       type: String,
       enum: ["JEE", "NEET", "UPSC", "GATE", "CODING", "STARTUP"],
       default: null,
     },
+
     planType: {
       type: String,
       enum: ["free", "serious", "pro"],
       default: "free",
     },
+
     isSurveyCompleted: {
-  type: Boolean,
-  default: false,
-},
-otp: {
-  type: String
-},
-otpExpires: {
-  type: Date
-},
-isVerified: {
-  type: Boolean,
-  default: false
-}
+      type: Boolean,
+      default: false,
+    },
+
+    otp: {
+      type: String,
+    },
+
+    otpExpires: {
+      type: Date,
+    },
+
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+
+    // ✅ IMPORTANT — ADD INSIDE SCHEMA
+    currentRoom: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Room",
+      default: null,
+    }
   },
   { timestamps: true }
 );

@@ -1,19 +1,13 @@
 const mongoose = require("mongoose");
 
 const roomSchema = new mongoose.Schema({
-  roomName: {
+  name: {
     type: String,
     required: true,
+    unique: true
   },
-  examType: {
-    type: String,
-    enum: ["JEE", "NEET"],
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
+  category: String,
+  description: String
 });
 
 module.exports = mongoose.model("Room", roomSchema);

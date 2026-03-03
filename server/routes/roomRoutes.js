@@ -1,31 +1,31 @@
-const express = require("express");
-const router = express.Router();
-const Room = require("../models/Room");
-
-// Create Room
-router.post("/create", async (req, res) => {
+router.post("/join", async (req, res) => {
   try {
-    const { roomName, examType } = req.body;
+    const { userId, roomId } = req.body;
 
-    const newRoom = await Room.create({
-      roomName,
-      examType,
-    });
+    const user = await User.findById(userId);
 
-    res.status(201).json(newRoom);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.currentRoom = roomId;
+    await user.save();
+
+    res.json({ message: "Joined room successfully" });
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
-
-// Get All Rooms
-router.get("/", async (req, res) => {
+router.get("/:roomId/users", async (req, res) => {
   try {
-    const rooms = await Room.find().sort({ createdAt: -1 });
-    res.json(rooms);
+    const users = await User.find({
+      currentRoom: req.params.roomId
+    }).select("firstName lastName primaryCategory");
+
+    res.json(users);
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
-
-module.exports = router;

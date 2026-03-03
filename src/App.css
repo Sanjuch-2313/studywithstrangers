@@ -36,3 +36,21 @@
     transform: rotate(360deg);
   }
 }
+.room-swiper .swiper-pagination {
+  margin-top: 20px;
+}
+
+.room-swiper .swiper-pagination-bullet {
+  width: 10px;
+  height: 10px;
+  background: #d1d5db;
+  opacity: 1;
+  border-radius: 9999px;
+  margin: 0 6px !important;
+  transition: all 0.3s ease;
+}
+
+.room-swiper .swiper-pagination-bullet-active {
+  background: #000000;
+  width: 25px;
+}

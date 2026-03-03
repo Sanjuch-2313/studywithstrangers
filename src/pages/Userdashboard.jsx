@@ -2,6 +2,18 @@ import React, { useState, useEffect } from "react";
 import { FaBell, FaUserCircle, FaFire, FaChartLine } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
+/* ---------------- ROOMS ---------------- */
+const rooms = [
+  { id: "jee", name: "JEE" },
+  { id: "neet-ug", name: "NEET UG" },
+  { id: "neet-pg", name: "NEET PG" },
+  { id: "gate", name: "GATE" },
+  { id: "competitive", name: "Competitive Exams" },
+  { id: "coding", name: "Coding" },
+  { id: "designing", name: "Designing" },
+  { id: "startups", name: "Startups" }
+];
+
 export default function UserDashboard() {
   const navigate = useNavigate();
 
@@ -19,7 +31,29 @@ export default function UserDashboard() {
 
   const totalSteps = 3;
 
-  // Animation Controller
+  /* ---------------- JOIN ROOM ---------------- */
+  const handleJoinRoom = async (roomId) => {
+    try {
+      const userId = localStorage.getItem("userId");
+
+      await fetch("http://127.0.0.1:5005/api/rooms/join", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          userId,
+          roomId
+        })
+      });
+
+      navigate(`/room/${roomId}`);
+    } catch (error) {
+      console.error("Join room failed:", error);
+    }
+  };
+
+  /* ---------------- Animation Controller ---------------- */
   useEffect(() => {
     if (!showSurvey) {
       setShowIntroAnimation(true);
@@ -97,7 +131,6 @@ export default function UserDashboard() {
       {/* HEADER */}
       <header className="flex justify-between items-center px-6 md:px-12 py-4 backdrop-blur-xl bg-white/60 border-b border-white/40 shadow-sm sticky top-0 z-20">
 
-        {/* LEFT */}
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg">
             SWS
@@ -107,7 +140,6 @@ export default function UserDashboard() {
           </h1>
         </div>
 
-        {/* RIGHT ICONS */}
         <div className="flex items-center gap-6 relative">
 
           <FaChartLine className="text-xl text-gray-600 hover:text-indigo-600 cursor-pointer transition" />
@@ -159,6 +191,37 @@ export default function UserDashboard() {
         <p className="text-gray-500 mt-3">
           Your focus journey starts here.
         </p>
+
+        {/* -------- ROOMS SECTION -------- */}
+        <div className="mt-12">
+          <h3 className="text-2xl font-semibold mb-6">
+            Join Study Rooms
+          </h3>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            {rooms.map((room) => (
+              <div
+                key={room.id}
+                onClick={() => handleJoinRoom(room.id)}
+                className="cursor-pointer p-6 rounded-2xl 
+                bg-gradient-to-br from-indigo-500 to-purple-600
+                text-white shadow-lg 
+                hover:scale-105 transition-all duration-300"
+              >
+                <h4 className="text-xl font-bold mb-2">
+                  {room.name}
+                </h4>
+
+                <p className="text-sm opacity-90">
+                  Click to join and start studying
+                </p>
+              </div>
+            ))}
+
+          </div>
+        </div>
+
       </div>
 
       {/* INTRO ANIMATION OVERLAY */}
@@ -169,7 +232,7 @@ export default function UserDashboard() {
           </h1>
         </div>
       )}
-
+      
       {/* SURVEY OVERLAY */}
       {showSurvey && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm z-50">
