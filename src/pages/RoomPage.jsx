@@ -1,8 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaUserPlus, FaCommentDots, FaEyeSlash } from "react-icons/fa";
 import { useParams, useNavigate } from "react-router-dom";
+import Peer from "simple-peer";
+import { socket } from "../socket";
 
 export default function RoomPage() {
+    const [peers, setPeers] = useState([]);
 
   const { roomId } = useParams();
   const navigate = useNavigate();
@@ -39,8 +42,33 @@ export default function RoomPage() {
       }
 
     };
+    socket.emit("join-room", {
+  roomId,
+  userId: localStorage.getItem("userId")
+});
+socket.on("user-joined", (user) => {
+
+  const peer = new Peer({
+    initiator: true,
+    trickle: false,
+    stream: streamRef.current
+  });
+
+  peer.on("signal", signal => {
+
+    socket.emit("sending-signal", {
+      signal,
+      to: user.socketId
+    });
+
+  });
+
+  setPeers(prev => [...prev, peer]);
+
+});
 
     startCamera();
+
 
     return () => {
       if (streamRef.current) {
@@ -136,6 +164,15 @@ export default function RoomPage() {
                 playsInline
                 className="w-full h-[200px] object-cover rounded-t-xl"
               />
+              {peers.map((peer, index) => (
+
+    <video
+      key={index}
+      autoPlay
+      className="bg-black rounded"
+    />
+
+  ))}
 
               <span className="absolute top-2 left-2 text-green-400 text-sm">
                 ● Live
