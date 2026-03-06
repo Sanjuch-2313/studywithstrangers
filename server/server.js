@@ -2,7 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
-
+const http = require("http");
+const { Server } = require("socket.io");
 
 dotenv.config();
 connectDB();
@@ -20,6 +21,56 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 5005;
 
-app.listen(PORT, () => {
+/* ---------- SOCKET SERVER ---------- */
+
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: "*"
+  }
+});
+
+const users = {};
+
+io.on("connection", (socket) => {
+
+  socket.on("join-room", ({ roomId, userId }) => {
+
+    socket.join(roomId);
+
+    if (!users[roomId]) {
+      users[roomId] = [];
+    }
+
+    users[roomId].push({
+      socketId: socket.id,
+      userId
+    });
+
+    socket.emit("all-users", users[roomId]);
+
+    socket.to(roomId).emit("user-joined", {
+      socketId: socket.id,
+      userId
+    });
+
+  });
+
+  socket.on("disconnect", () => {
+
+    for (const room in users) {
+      users[room] = users[room].filter(
+        user => user.socketId !== socket.id
+      );
+    }
+
+  });
+
+});
+
+/* ---------- START SERVER ---------- */
+
+server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
