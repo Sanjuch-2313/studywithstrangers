@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import UserDashboard from "./pages/Userdashboard";
 import VerifyOTP from "./pages/VerifyOTP";
+import RoomPage from "./pages/RoomPage";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/user-dashboard" element={<UserDashboard />} />
       <Route path="/verify-otp" element={<VerifyOTP />} />
+      <Route path="/room/:roomId" element={<RoomPage />} />
     </Routes>
   );
 }
