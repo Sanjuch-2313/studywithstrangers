@@ -70,3 +70,13 @@
 .animate-logoIntro {
   animation: logoZoomToNav 2s cubic-bezier(0.65, 0, 0.35, 1) forwards;
 }
+.alert-border {
+  border: 6px solid red;
+  animation: pulseAlert 1s infinite;
+}
+
+@keyframes pulseAlert {
+  0% { box-shadow: 0 0 0 red }
+  50% { box-shadow: 0 0 20px red }
+  100% { box-shadow: 0 0 0 red }
+}

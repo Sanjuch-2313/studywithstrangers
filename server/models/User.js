@@ -43,23 +43,18 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
 
-    otp: {
-      type: String,
-    },
+    otp: String,
 
-    otpExpires: {
-      type: Date,
-    },
+    otpExpires: Date,
 
     isVerified: {
       type: Boolean,
       default: false,
     },
 
-    // ✅ IMPORTANT — ADD INSIDE SCHEMA
+    /* IMPORTANT — must be inside schema */
     currentRoom: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Room",
+      type: String,
       default: null,
     }
   },
